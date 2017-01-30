@@ -1,0 +1,75 @@
+.hangman-container {
+    height: 100px;
+    margin: 0px;
+    padding: 0px;
+    width: 100px;
+}
+
+.arms-container {    
+    height: 50px;
+    margin: 0px;
+    padding: 0px;
+    width: 200px;    
+    position: absolute;
+    top: 183px;
+    left: 0px;    
+}
+
+.legs-container {    
+    height: 50px;
+    margin: 0px;
+    padding: 0px;
+    width: 200px;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;    
+}
+
+.ropeNeck-container {
+    border: 1px dashed black;  
+    background-color: red;  
+    height: 10px;
+    left: 44px;
+    position: absolute;
+    top: 160px;
+    width: 10px;
+}
+
+.rope-container {
+    height: 300px;
+    left: 44px;
+    position: absolute;
+    top: 30px;
+    width: 200px;
+}
+
+input[type="text"] {
+    margin: 10px;
+}
+
+input[type="button"] {
+    width: 50px;
+}
+
+#hangman-head {
+    height: 100px;
+    width: 100px;
+    margin: 0px;
+    padding: 0px;
+}
+
+#hangman-body {
+    height: 100px;
+    width: 100px;    
+}
+
+#main {
+    margin-top: 40px;    
+    padding-top: 66px;
+    position: relative;
+}
+
+#rope {
+    height: 300px;
+    width: 300px;
+}
