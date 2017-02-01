@@ -98,21 +98,62 @@
         });
 
         var Form = React.createClass({
-            render: function() {
+            sendLetter: function() {
+                var letter = this.refs.letter;
+                this.props.checkLetter(letter.value);
+            },
+            render: function() {                
                 return(
                     <form action="">
-                        <input type="text" placeholder="Type a letter" />
-                        <input type="button" value="send" />    
+                        <input type="text" placeholder="Type a letter" ref="letter" />
+                         <input type="button" value="send" onClick={this.sendLetter} />
                     </form>
                 )
             }
         });
 
+        var Letter = React.createClass({
+            render: function() {
+                var numberOfLines = this.props.ramdomWord.length;
+                var lines = [];
+                for (var i = 0; i < numberOfLines; i++) {
+                    lines.push(
+                        <span className="glyphicon glyphicon-star" key={i}>__ </span>
+                    );
+                }
+                return(     
+                    <div className="letters-container">
+                        {lines}
+                    </div> 
+                )
+            }
+        });
+
         var Main = React.createClass({
+            getInitialState: function() {
+                return({
+                    words: ['computer', 'react', 'backbone', 'javascript', 'home', 'developer'],
+                    success: null,
+                    attempts: 6,
+                    wordSelected: this.randomWordPicker()
+                })
+            },
+            randomWordPicker: function() {
+                var numberOfWords = this.state.words.length;
+                var randomNumber = Math.floor(Math.random() * numberOfWords);
+                var randomWord = this.state.words[randomNumber];                
+                return randomWord;
+            },
+            checkLetter: function(letter) {
+                var tales = "uno";
+                console.log("The letter is " + letter);
+                console.log("The word is " + tales);
+            },
             render: function () {
                 return(
                     <div>
-                        <Form />
+                        <Form checkLetter={this.checkLetter} />
+                        <Letter ramdomWord={this.randomWordPicker}/>
                         <div id="main">
                             <Head />
                             <Body />
