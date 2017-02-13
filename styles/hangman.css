@@ -43,12 +43,13 @@
     width: 200px;
 }
 
-input[type="text"] {
-    margin: 10px;
+.letters-container {
+    margin: 18px 0 0 11px;
+    text-transform: uppercase;
 }
 
-input[type="button"] {
-    width: 50px;
+input[type="text"] {
+    margin: 10px;
 }
 
 #hangman-head {
@@ -70,6 +71,35 @@ input[type="button"] {
 }
 
 #rope {
+    display: none;
     height: 300px;
     width: 300px;
+}
+
+#ropeNeck {
+    display: none;
+}
+
+#hangman-rightLeg{
+    display: none;
+}
+
+#hangman-leftLeg{
+    display: none;
+}
+
+#hangman-rightArm{
+    display: none;
+}
+
+#hangman-leftArm{
+    display: none;
+}
+
+#hangman-body{
+    display: none;
+}
+
+#hangman-head{
+    display: none;
 }

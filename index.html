@@ -12,8 +12,7 @@
     <script src="https://fb.me/react-15.0.0.js"></script>
     <script src="https://fb.me/react-dom-15.0.0.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
-    <script src="scripts/jquery.js"></script>
-    <script src="scripts/canvas.js"></script>
+    <script src="scripts/jquery.js"></script>    
     <script type="text/babel">
         var Head = React.createClass({
             render: function() {
@@ -80,8 +79,8 @@
         var RopeNeck = React.createClass({
             render: function() {
                 return(
-                    <div className="ropeNeck-container">
-                        <canvas id="ropeNeck">Your browser does not support the HTML5 canvas tag.</canvas>
+                    <div className="ropeNeck-container" id="ropeNeck">
+                        
                     </div>
                 )
             }
@@ -102,11 +101,16 @@
                 var letter = this.refs.letter;
                 this.props.checkLetter(letter.value);
             },
-            render: function() {                
+            render: function() {     
+                //document.getElementById("inputText").disabled = {this.props.inputState}; 
+                var that = this; 
+                $(document).ready(function(){
+                    document.getElementById("inputText").disabled = that.props.inputState;
+                });         
                 return(
                     <form action="">
-                        <input type="text" placeholder="Type a letter" ref="letter" />
-                         <input type="button" value="send" onClick={this.sendLetter} />
+                        <input id="inputText" type="text" placeholder="Type a letter" ref="letter" maxLength="1" autofocus />
+                        <input type="button" value={this.props.buttonValue} onClick={this.sendLetter} />
                     </form>
                 )
             }
@@ -114,13 +118,35 @@
 
         var Letter = React.createClass({
             render: function() {
-                var numberOfLines = this.props.cosito.length;
-                var lines = [];
-                for (var i = 0; i < numberOfLines; i++) {
-                    lines.push(
-                        <span className="glyphicon glyphicon-star" key={i}>__ </span>
-                    );
+                var lines = null;
+                var emptyArray = true;
+                var wordSplited = this.props.wordSplited;
+                if(wordSplited !== null) {
+                    for(var i = 0; i < wordSplited.length; i++) {
+                        if(wordSplited[i] !== undefined) {
+                            emptyArray = false;
+                        }
+                    }
                 }
+                
+                if(wordSplited === null || emptyArray === true){
+                    var paila = false;
+                    if(this.props.wordSelected === null){
+                        var paila = true;
+                        lines = 'Press button to play';
+                    }
+                    if(!paila){
+                        lines = [];
+                        var numberOfLines = this.props.wordSelected.length;
+                        for (var i = 0; i < numberOfLines; i++) {
+                            lines.push(
+                                <span className="glyphicon glyphicon-star" key={i}>__ </span>
+                            );
+                        }
+                    }
+                }else {
+                    lines = this.props.wordSplited;
+                }                                
                 return(     
                     <div className="letters-container">
                         {lines}
@@ -136,22 +162,76 @@
                     words: ['computer', 'react', 'backbone', 'javascript', 'home', 'developer'],
                     success: null,
                     attempts: 6, 
-                    randomWordPicker: function() {
-                        var numberOfWords = this.words.length;
-                        var randomNumber = Math.floor(Math.random() * numberOfWords);
-                        this.wordSelected = this.words[randomNumber];                          
-                    }                    
+                    wordSelected: null,                    
+                    wordSplited: null,
+                    gameFinished: false
                 })                
             },
             checkLetter: function(letter) {
-                
+                var that = this;                
+                var letterExist = false;
+                if(letter === "" && that.state.wordSelected === null){
+                    var numberOfWords = that.state.words.length;
+                    var randomNumber = Math.floor(Math.random() * numberOfWords);                    
+                    that.setState({
+                        wordSelected: this.state.words[randomNumber],
+                        wordSplited: new Array(this.state.words[randomNumber].length)
+                    });
+                } else{                   
+                    //this.state.wordSplited = new Array(this.state.wordSelected.length);
+                    var splitWord = this.state.wordSelected.split('');                    
+                    var copyArray = this.state.wordSplited;
+                    for(var i = 0;  i < copyArray.length; i++){
+                        if(copyArray[i] === undefined){                            
+                            copyArray[i] = "__ "
+                        }
+                    }
+                    splitWord.forEach(function(l, index){
+                        if(letter === l){ 
+                            copyArray[index] = letter + " ";                       
+                            that.setState({wordSplited: copyArray});                                                       
+                            letterExist = true;
+                        }                                         
+                    });
+                    if(!letterExist){
+                        this.setState({attempts: this.state.attempts - 1});                 
+                    }
+                }  
             },
             render: function () {
-                return(
+                var buttonValue, inputState;
+                var attempts = this.state.attempts;
+                var hangMan = <Rope />;
+                if(this.state.wordSelected === null) {
+                    buttonValue = 'Play Game';
+                    inputState = true
+                } else {
+                    buttonValue = 'Send';
+                    inputState = false;
+                }
+                if(attempts === 5) {
+                    document.getElementById("rope").style.display= "block";
+                }else if(attempts === 4) {
+                    document.getElementById("hangman-head").style.display= "block";                      
+                }else if(attempts === 3) {
+                    document.getElementById("hangman-body").style.display= "block";                      
+                }else if(attempts === 2) {
+                    document.getElementById("hangman-leftArm").style.display= "block";
+                    document.getElementById("hangman-rightArm").style.display= "block";                      
+                    
+                }else if(attempts === 1) {
+                    document.getElementById("hangman-rightLeg").style.display= "block";                      
+                    document.getElementById("hangman-leftLeg").style.display= "block";
+                }else if(attempts === 0) {
+                    document.getElementById("ropeNeck").style.display= "block";                      
+                }
+                
+                return(                   
                     <div>
-                        <Form checkLetter={this.checkLetter} />
-                        <Letter ramdomWord={this.state.randomWordPicker()} cosito={this.state.wordSelected}/>
-                        <div id="main">
+                        <Form checkLetter={this.checkLetter} buttonValue={buttonValue} inputState={inputState} />
+                        <Letter wordSelected={this.state.wordSelected} wordSplited={this.state.wordSplited} />
+                        <div id="main">                            
+                            <Rope />
                             <Head />
                             <Body />
                             <ArmR />
@@ -159,7 +239,6 @@
                             <LegL />
                             <LegR />
                             <RopeNeck />  
-                            <Rope />  
                         </div>                                    
                     </div>            
                 )
@@ -169,7 +248,8 @@
         ReactDOM.render(
         <Main />, document.getElementById('container')
         );
-    </script>    
+    </script>   
+    <script src="scripts/canvas.js"></script> 
 </body>
 
 </html>
