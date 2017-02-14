@@ -8,7 +8,8 @@
 </head>
 
 <body>
-    <h1>HangMan Game</h1>
+    <h1 class="title">HangMan Game</h1>
+    <hr />
     <div id="container"></div>
     <script src="https://fb.me/react-15.0.0.js"></script>
     <script src="https://fb.me/react-dom-15.0.0.js"></script>
@@ -112,8 +113,8 @@
                 });         
                 return(
                     <form action="">
-                        <input id="inputText" type="text" placeholder="Type a letter" ref="letter" maxLength="1" autoFocus="true" />
-                        <input id="formButton"type="button" value={this.props.buttonValue} onClick={this.sendLetter} />
+                        <input id="inputText" type="text" placeholder="Type a letter" ref="letter" maxLength="1" autoFocus="true" className="form-control" />
+                        <input id="formButton"type="button" value={this.props.buttonValue} onClick={this.sendLetter} className="btn btn-primary"/>
                     </form>
                 )
             }
@@ -144,7 +145,7 @@
                         var numberOfLines = this.props.wordSelected.length;
                         for (var i = 0; i < numberOfLines; i++) {
                             lines.push(
-                                <span className="glyphicon glyphicon-star" key={i}>_ </span>
+                                <span key={i}>_ </span>
                             );
                         }
                     }
@@ -238,7 +239,7 @@
                 }                
                 if(this.state.attempts <= 0){                    
                     this.replaceState(this.getInitialState());
-                    alert("You've lost the word was -> " + this.state.wordSelected);
+                    alert("Sorry you have no more attempts... \nYou're dead, the word was -> " + this.state.wordSelected);
                 }
                 
             },
@@ -288,7 +289,7 @@
                 
                 return(                   
                     <div>
-                        <div id="form-button-section">
+                        <div id="form-button-section" cssClass="form-control">
                             <Form checkLetter={this.checkLetter} buttonValue={buttonValue} inputState={inputState} buttonState={buttonState}/>
                             <Letter wordSelected={this.state.wordSelected} wordSplited={this.state.wordSplited} />
                             {informationFrame}

@@ -1,3 +1,7 @@
+hr {
+    width: 92%;
+}
+
 .hangman-container {
     height: 100px;
     margin: 0px;
@@ -51,7 +55,9 @@
 }
 
 input[type="text"] {
+    display: inline-block;
     margin: 10px;
+    width: 60%;
 }
 
 #hangman-head {
@@ -135,18 +141,22 @@ input[type="text"] {
 
 #form-button-section .attempts-remaining {
     color: black;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 20px;    
     letter-spacing: 0;
     text-transform: none;
 }
 
 #form-button-section .attempts-remaining span {
     color: red;
+    font-weight: bold;
 }
 
 #reset-game-button {
     display: block;
     margin: 0px auto;
     margin-top: 50px;
+}
+
+#container, .title {
+    margin: 20px 0 20px 40px;
 }
