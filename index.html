@@ -100,17 +100,19 @@
             sendLetter: function() {
                 var letter = this.refs.letter;
                 this.props.checkLetter(letter.value);
+                this.refs.letter.value = '';
             },
             render: function() {     
-                //document.getElementById("inputText").disabled = {this.props.inputState}; 
                 var that = this; 
                 $(document).ready(function(){
                     document.getElementById("inputText").disabled = that.props.inputState;
+                    document.getElementById("inputText").focus();
+                    document.getElementById("formButton").disabled = that.props.buttonState;
                 });         
                 return(
                     <form action="">
-                        <input id="inputText" type="text" placeholder="Type a letter" ref="letter" maxLength="1" autofocus />
-                        <input type="button" value={this.props.buttonValue} onClick={this.sendLetter} />
+                        <input id="inputText" type="text" placeholder="Type a letter" ref="letter" maxLength="1" autoFocus="true" />
+                        <input id="formButton"type="button" value={this.props.buttonValue} onClick={this.sendLetter} />
                     </form>
                 )
             }
@@ -121,6 +123,7 @@
                 var lines = null;
                 var emptyArray = true;
                 var wordSplited = this.props.wordSplited;
+                var letterSent = [];
                 if(wordSplited !== null) {
                     for(var i = 0; i < wordSplited.length; i++) {
                         if(wordSplited[i] !== undefined) {
@@ -150,7 +153,30 @@
                 return(     
                     <div className="letters-container">
                         {lines}
+                        <div id="letters-sent">
+                            
+                        </div>
                     </div> 
+                )
+            }
+        });
+
+        var LetterSent = React.createClass({
+            render: function() {
+                return(
+                    <div id="letter-sent">
+                        <h1>The letters you have choosen are:</h1>
+                        <p>{this.props.letterSelected}</p>
+                        <p className="attempts-remaining">Attempts remaining: <span>{this.props.attempts}</span></p>
+                    </div>
+                )    
+            }
+        });
+
+        var ResetGame = React.createClass({
+            render: function() {
+                return(
+                    <button id="reset-game-button">Reset Game</button>
                 )
             }
         });
@@ -164,12 +190,14 @@
                     attempts: 6, 
                     wordSelected: null,                    
                     wordSplited: null,
-                    gameFinished: false
+                    gameFinished: false,
+                    letterSelected: []
                 })                
             },
             checkLetter: function(letter) {
                 var that = this;                
                 var letterExist = false;
+                this.setState({letterSelected: this.state.letterSelected.concat(letter + " ")});
                 if(letter === "" && that.state.wordSelected === null){
                     var numberOfWords = that.state.words.length;
                     var randomNumber = Math.floor(Math.random() * numberOfWords);                    
@@ -178,7 +206,6 @@
                         wordSplited: new Array(this.state.words[randomNumber].length)
                     });
                 } else{                   
-                    //this.state.wordSplited = new Array(this.state.wordSelected.length);
                     var splitWord = this.state.wordSelected.split('');                    
                     var copyArray = this.state.wordSplited;
                     for(var i = 0;  i < copyArray.length; i++){
@@ -198,17 +225,30 @@
                     }
                 }  
             },
+            resetGame: function() {
+                this.replaceState(this.getInitialState());
+            },
             render: function () {
-                var buttonValue, inputState;
+                var buttonValue, inputState, buttonState;
                 var attempts = this.state.attempts;
-                var hangMan = <Rope />;
-                if(this.state.wordSelected === null) {
-                    buttonValue = 'Play Game';
-                    inputState = true
-                } else {
-                    buttonValue = 'Send';
-                    inputState = false;
+                var informationFrame;
+                if(attempts > 0 ) {
+                    if(this.state.wordSelected === null) {
+                        buttonValue = 'Play Game';
+                        inputState = true
+                    } else {
+                        buttonValue = 'Send';
+                        inputState = false;
+                        informationFrame = <LetterSent letterSelected={this.state.letterSelected} attempts={this.state.attempts} />
+                        
+                    }
+                }else{
+                   informationFrame = <ResetGame/> 
+                   buttonValue = 'Game Over :(';
+                   inputState = true;
+                   buttonState = true;
                 }
+                
                 if(attempts === 5) {
                     document.getElementById("rope").style.display= "block";
                 }else if(attempts === 4) {
@@ -228,8 +268,11 @@
                 
                 return(                   
                     <div>
-                        <Form checkLetter={this.checkLetter} buttonValue={buttonValue} inputState={inputState} />
-                        <Letter wordSelected={this.state.wordSelected} wordSplited={this.state.wordSplited} />
+                        <div id="form-button-section">
+                            <Form checkLetter={this.checkLetter} buttonValue={buttonValue} inputState={inputState} buttonState={buttonState}/>
+                            <Letter wordSelected={this.state.wordSelected} wordSplited={this.state.wordSplited} />
+                            {informationFrame}
+                        </div>                        
                         <div id="main">                            
                             <Rope />
                             <Head />
@@ -246,7 +289,7 @@
         });
 
         ReactDOM.render(
-        <Main />, document.getElementById('container')
+            <Main />, document.getElementById('container')
         );
     </script>   
     <script src="scripts/canvas.js"></script> 
