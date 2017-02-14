@@ -4,6 +4,7 @@
 <head>
     <title>HangMan Game</title>
     <link rel="stylesheet" href="styles/hangman.css">
+    <link rel="stylesheet" href="styles/bootstrap.css">
 </head>
 
 <body>
@@ -143,7 +144,7 @@
                         var numberOfLines = this.props.wordSelected.length;
                         for (var i = 0; i < numberOfLines; i++) {
                             lines.push(
-                                <span className="glyphicon glyphicon-star" key={i}>__ </span>
+                                <span className="glyphicon glyphicon-star" key={i}>_ </span>
                             );
                         }
                     }
@@ -176,7 +177,7 @@
         var ResetGame = React.createClass({
             render: function() {
                 return(
-                    <button id="reset-game-button">Reset Game</button>
+                    <button id="reset-game-button" onClick={this.props.reset()}>Reset Game</button>
                 )
             }
         });
@@ -197,7 +198,8 @@
             checkLetter: function(letter) {
                 var that = this;                
                 var letterExist = false;
-                this.setState({letterSelected: this.state.letterSelected.concat(letter + " ")});
+                var joinWord;
+                this.setState({letterSelected: this.state.letterSelected.concat(letter + " ")});                
                 if(letter === "" && that.state.wordSelected === null){
                     var numberOfWords = that.state.words.length;
                     var randomNumber = Math.floor(Math.random() * numberOfWords);                    
@@ -206,16 +208,16 @@
                         wordSplited: new Array(this.state.words[randomNumber].length)
                     });
                 } else{                   
-                    var splitWord = this.state.wordSelected.split('');                    
-                    var copyArray = this.state.wordSplited;
+                    var splitWord = this.state.wordSelected.split('');                                   
+                    var copyArray = this.state.wordSplited;                    
                     for(var i = 0;  i < copyArray.length; i++){
                         if(copyArray[i] === undefined){                            
-                            copyArray[i] = "__ "
+                            copyArray[i] = "_ "
                         }
                     }
                     splitWord.forEach(function(l, index){
                         if(letter === l){ 
-                            copyArray[index] = letter + " ";                       
+                            copyArray[index] = letter;                       
                             that.setState({wordSplited: copyArray});                                                       
                             letterExist = true;
                         }                                         
@@ -223,16 +225,28 @@
                     if(!letterExist){
                         this.setState({attempts: this.state.attempts - 1});                 
                     }
-                }  
-            },
-            resetGame: function() {
-                this.replaceState(this.getInitialState());
+                }
+                if(this.state.wordSplited !== null) {
+                    joinWord = this.state.wordSplited.join('');  
+                    console.log(joinWord);
+                    console.log(this.state.wordSelected);
+                    console.log(joinWord === this.state.wordSelected);
+                    if(joinWord === this.state.wordSelected) {
+                        this.replaceState(this.getInitialState());
+                        alert("Congratulations, you win!!, the word was -> " + this.state.wordSelected);    
+                    }
+                }                
+                if(this.state.attempts <= 0){                    
+                    this.replaceState(this.getInitialState());
+                    alert("You've lost the word was -> " + this.state.wordSelected);
+                }
+                
             },
             render: function () {
                 var buttonValue, inputState, buttonState;
                 var attempts = this.state.attempts;
                 var informationFrame;
-                if(attempts > 0 ) {
+                
                     if(this.state.wordSelected === null) {
                         buttonValue = 'Play Game';
                         inputState = true
@@ -242,13 +256,19 @@
                         informationFrame = <LetterSent letterSelected={this.state.letterSelected} attempts={this.state.attempts} />
                         
                     }
-                }else{
-                   informationFrame = <ResetGame/> 
-                   buttonValue = 'Game Over :(';
-                   inputState = true;
-                   buttonState = true;
-                }
                 
+                if(attempts === 6){
+                    $(document).ready(function(){
+                        document.getElementById("rope").style.display= "none";
+                        document.getElementById("hangman-head").style.display= "none";                      
+                        document.getElementById("hangman-body").style.display= "none";
+                        document.getElementById("hangman-leftArm").style.display= "none";
+                        document.getElementById("hangman-rightArm").style.display= "none";
+                        document.getElementById("hangman-rightLeg").style.display= "none";                      
+                        document.getElementById("hangman-leftLeg").style.display= "none";
+                        document.getElementById("ropeNeck").style.display= "none";
+                    });                    
+                }
                 if(attempts === 5) {
                     document.getElementById("rope").style.display= "block";
                 }else if(attempts === 4) {

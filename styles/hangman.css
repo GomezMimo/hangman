@@ -45,6 +45,7 @@
 
 .letters-container {
     font-size: 22px;
+    letter-spacing: 4px;
     margin: 18px 0 0 11px;
     text-transform: uppercase;
 }
@@ -66,7 +67,6 @@ input[type="text"] {
 }
 
 #main {
-    border: 1px solid black;
     box-sizing: border-box;
     float:left;
     height: 400px;
@@ -77,7 +77,6 @@ input[type="text"] {
 }
 
 #form-button-section {
-    border: 1px solid black;
     box-sizing: border-box;
     float:left;
     height: 310px;
